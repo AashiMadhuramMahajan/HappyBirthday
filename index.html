@@ -780,12 +780,12 @@
       loadEncryptedImage('encrypted-images/I3.enc', document.getElementById('I3'));
       loadEncryptedImage('encrypted-images/C1.enc', document.getElementById('C1'));
       loadEncryptedImage('encrypted-images/SN.enc', document.getElementById('SN'));
-      let password = sessionStorage.getItem('romantic_vault_key');
+      let password = localStorage.getItem('romantic_vault_key');
         if (!password) {
             // password = "Secret Password / Keyphrase:"
             password = prompt('Enter our secret word to unlock this memory photo ❤️:');
             if (!password) return;
-            sessionStorage.setItem('romantic_vault_key', password.trim());
+            localStorage.setItem('romantic_vault_key', password.trim());
         }
     }
     // ----------------------------------------------------
@@ -1059,12 +1059,12 @@
          */
         async function loadEncryptedImage(encFilePath, imgElement) {
         // Check if password was already saved in this session, otherwise ask for it
-        let password = sessionStorage.getItem('romantic_vault_key');
+        let password = localStorage.getItem('romantic_vault_key');
         if (!password) {
             // password = "Secret Password / Keyphrase:"
             password = prompt('Enter our secret word to unlock this memory photo ❤️:');
             if (!password) return;
-            sessionStorage.setItem('romantic_vault_key', password.trim());
+            localStorage.setItem('romantic_vault_key', password.trim());
         }
 
         try {
@@ -1094,7 +1094,7 @@
 
         } catch (err) {
             console.error('Decryption failed:', err);
-            sessionStorage.removeItem('romantic_vault_key'); // clear faulty password
+            localStorage.removeItem('romantic_vault_key'); // clear faulty password
             alert('Incorrect secret word! Please try again ❤️');
             password = prompt('Enter our secret word to unlock this memory photo ❤️:');
         }
