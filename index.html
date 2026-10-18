@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday, My Love! ✨</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Plus+Jakarta+Sans:wght@300;400;600&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="AMinitials.png">
+
+  <style>
+    :root {
+      --primary: #ff4d6d;
+      --primary-dark: #c9184a;
+      --primary-light: #ff758f;
+      --accent: #ffe5ec;
+      --card-bg: rgba(255, 255, 255, 0.95);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow-x: hidden;
+      color: #333;
+    }
+
+    /* Ambient Background Floating Hearts */
+    #hearts-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Fixed Centered Physics Emojis */
+    .emoji-particle {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 99999;
+      user-select: none;
+      font-size: 28px;
+      line-height: 1;
+      will-change: transform, opacity;
+      transform-origin: center center;
+    }
+
+    .main-container {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 580px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* --- Stage 1: Envelope --- */
+    /* --- Realistic Layered Envelope --- */
+    .envelope-wrapper {
+      perspective: 1000px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .envelope-wrapper:hover {
+      transform: translateY(-6px) scale(1.02);
+    }
+
+    .envelope {
+      width: 320px;
+      height: 220px;
+      background: #d83a56; /* Darker interior/back wall */
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+      position: relative;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 50px rgba(255, 77, 109, 0.3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transform-style: preserve-3d;
+    }
+
+    /* Front Pocket with rounded bottom corners */
+    .envelope-pocket {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #ff758f, #ff4d6d);
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+      clip-path: polygon(0 40%, 50% 70%, 100% 40%, 100% 100%, 0 100%);
+      z-index: 3;
+    }
+
+    /* Top Flap */
+    .envelope-flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 110px;
+      background: #ff4d6d;
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+      transform-origin: top center;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), z-index 0.2s ease;
+      z-index: 4;
+    }
+
+    /* Open State: Flap swings 180 deg smoothly behind the back wall */
+    .envelope.open .envelope-flap {
+      transform: rotateX(180deg);
+      background: #d83a56;
+      z-index: 1;
+    }
+
+    .wax-seal {
+      width: 54px;
+      height: 54px;
+      background: radial-gradient(circle, #ffd700, #d4af37);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      position: absolute;
+      top: 78px;
+      z-index: 5;
+      animation: pulse 2s infinite;
+      transition: opacity 0.3s ease;
+    }
+
+    .envelope.open .wax-seal {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .envelope-tag {
+      position: absolute;
+      bottom: 22px;
+      color: white;
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.5rem;
+      z-index: 5;
+    }
+
+    /* --- Stage 2: Multi-Page Booklet --- */
+    .book-container {
+      display: none;
+      width: 100%;
+      min-height: 580px;
+      background: var(--card-bg);
+      backdrop-filter: blur(15px);
+      border-radius: 24px;
+      padding: 30px 24px 20px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35);
+      animation: cardPopIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      position: relative;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    @keyframes cardPopIn {
+      0% { opacity: 0; transform: translateY(40px) scale(0.9); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .page {
+      display: none;
+      text-align: center;
+      animation: fadeInPage 0.45s ease forwards;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    @keyframes fadeInPage {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .page-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: var(--primary-dark);
+      margin-bottom: 4px;
+    }
+
+    .page-subtitle {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.5rem;
+      color: var(--primary);
+      margin-bottom: 16px;
+    }
+
+    /* Gift Box */
+    .gift-box {
+      font-size: 60px;
+      cursor: pointer;
+      display: inline-block;
+      margin: 10px 0;
+      animation: wiggle 2.5s infinite;
+      transition: transform 0.3s ease;
+    }
+
+    @keyframes wiggle {
+      0%, 100% { transform: rotate(0deg) scale(1); }
+      80% { transform: rotate(0deg) scale(1); }
+      85% { transform: rotate(-8deg) scale(1.08); }
+      90% { transform: rotate(8deg) scale(1.08); }
+      95% { transform: rotate(-4deg) scale(1.04); }
+    }
+
+    .reasons-box {
+      display: none;
+      background: var(--accent);
+      border: 1px dashed var(--primary);
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--primary-dark);
+      margin: 10px auto;
+    }
+
+    .message-content {
+      font-size: 0.98rem;
+      line-height: 1.65;
+      color: #444;
+      margin: 15px 0;
+      text-align: left;
+      background: rgba(255, 240, 243, 0.7);
+      padding: 16px;
+      border-radius: 14px;
+      border-left: 4px solid var(--primary);
+    }
+
+    /* 3D Flippable Polaroid Deck */
+    .polaroid-deck {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 20px 0;
+      perspective: 1000px;
+    }
+
+    .polaroid-card {
+      width: 112px;
+      height: 155px;
+      background: transparent;
+      transform: rotate(var(--rot));
+      transition: transform 0.3s ease;
+      cursor: pointer;
+      perspective: 1000px;
+    }
+
+    .polaroid-card:hover {
+      transform: translateY(-8px) scale(1.08) rotate(0deg);
+      z-index: 10;
+    }
+
+    .polaroid-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+
+    .polaroid-card.is-flipped .polaroid-inner {
+      transform: rotateY(180deg);
+    }
+
+    .polaroid-front,
+    .polaroid-back {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      background: #fff;
+      padding: 8px 8px 12px;
+      border-radius: 8px;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .polaroid-img-front {
+      width: 100%;
+      height: 95px;
+      border-radius: 5px;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+    }
+
+    .polaroid-back {
+      transform: rotateY(180deg);
+    }
+
+    .polaroid-img-back {
+      width: 100%;
+      height: 95px;
+      border-radius: 5px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .polaroid-text {
+      font-family: 'Dancing Script', cursive;
+      font-size: 0.95rem;
+      text-align: center;
+      margin-top: 6px;
+      color: #444;
+    }
+
+    /* Page 3 Reasons Grid */
+    .love-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 15px 0;
+    }
+
+    .love-card {
+      background: #fff;
+      border: 1px solid #ffd1dc;
+      padding: 14px 10px;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100px;
+    }
+
+    .love-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-3px);
+    }
+
+    .love-card .icon {
+      font-size: 1.6rem;
+      margin-bottom: 4px;
+    }
+
+    .love-card .secret {
+      font-size: 0.82rem;
+      color: var(--primary-dark);
+      font-weight: 600;
+      display: none;
+    }
+
+    .love-card.revealed .secret {
+      display: block;
+    }
+
+    .love-card.revealed .tap-hint {
+      display: none;
+    }
+
+    .tap-hint {
+      font-size: 0.8rem;
+      color: #888;
+      font-style: italic;
+    }
+
+    /* Controls & Footer */
+    .nav-footer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      margin-top: auto;
+      padding-top: 15px;
+    }
+
+    .nav-buttons {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .nav-btn {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff;
+      border: none;
+      padding: 10px 22px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 6px 14px rgba(255, 77, 109, 0.35);
+      transition: all 0.2s ease;
+    }
+
+    .nav-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 18px rgba(255, 77, 109, 0.45);
+    }
+
+    .nav-btn.secondary {
+      background: #e9ecef;
+      color: #555;
+      box-shadow: none;
+    }
+
+    .nav-btn.secondary:hover {
+      background: #dee2e6;
+    }
+
+    .page-dots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ddd;
+      transition: all 0.3s ease;
+    }
+
+    .dot.active {
+      width: 22px;
+      border-radius: 10px;
+      background: var(--primary);
+    }
+
+    /* --- Love Pop-up Modal Overlay --- */
+    .love-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 12, 41, 0.65);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 10000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .love-modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Modal Window */
+    .love-modal-card {
+      background: rgba(255, 255, 255, 0.96);
+      width: 100%;
+      max-width: 440px;
+      max-height: 80vh;
+      border-radius: 20px;
+      padding: 24px 20px 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transform: scale(0.9) translateY(20px);
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .love-modal-overlay.active .love-modal-card {
+      transform: scale(1) translateY(0);
+    }
+
+    /* Close Button */
+    .modal-close-btn {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      background: transparent;
+      border: none;
+      font-size: 26px;
+      color: #888;
+      cursor: pointer;
+      line-height: 1;
+      transition: color 0.2s ease, transform 0.2s ease;
+    }
+
+    .modal-close-btn:hover {
+      color: var(--primary-dark);
+      transform: scale(1.15);
+    }
+
+    .modal-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      color: var(--primary-dark);
+      text-align: center;
+      margin-bottom: 14px;
+      padding-right: 15px;
+    }
+
+    /* Scrollable Container */
+    .modal-body-scroll {
+      overflow-y: auto;
+      padding-right: 6px;
+      flex-grow: 1;
+    }
+
+    /* Subtle Custom Scrollbar */
+    .modal-body-scroll::-webkit-scrollbar {
+      width: 5px;
+    }
+    .modal-body-scroll::-webkit-scrollbar-track {
+      background: rgba(255, 77, 109, 0.08);
+      border-radius: 10px;
+    }
+    .modal-body-scroll::-webkit-scrollbar-thumb {
+      background: var(--primary-light);
+      border-radius: 10px;
+    }
+
+    /* Cute Image */
+    .modal-img-wrapper {
+      width: 100%;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+      margin-bottom: 14px;
+    }
+
+    .modal-hero-img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Text Formatting */
+    .modal-text {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: #444;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .modal-signature {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.3rem;
+      color: var(--primary-dark);
+      margin-top: 6px;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="hearts-canvas"></canvas>
+
+  <div class="main-container">
+    <div class="envelope-wrapper" id="envelopeWrapper" onclick="openEnvelope(event)">
+      <div class="envelope" id="envelope">
+        <div class="envelope-flap"></div>
+        
+        <div class="envelope-pocket"></div>
+
+        <div class="wax-seal">💌</div>
+        <div class="envelope-tag">Tap to Open, My Love</div>
+      </div>
+    </div>
+
+    <div class="book-container" id="bookContainer">
+      
+      <div class="page active" id="page-0">
+        <h1 class="page-title">Happy Birthday!</h1>
+        <div class="page-subtitle">To my beautiful fiancée ✨</div>
+
+        <div class="gift-container" onclick="openGift(event)">
+          <div class="gift-box" id="giftBox">🎁</div>
+          <div style="font-size:0.85rem; color:#777; font-style:italic;" id="giftPrompt">✨ Tap the gift for sweet surprises ✨</div>
+          <div class="reasons-box" id="reasonsBox"></div>
+        </div>
+
+        <div class="message-content">
+          <p>
+            Today is all about celebrating the most breathtaking person in my life. Thank you for your warmth, gentle heart, and for making my world so much brighter.
+          </p>
+        </div>
+      </div>
+
+      <div class="page" id="page-1">
+        <h1 class="page-title">Our Moments</h1>
+        <div class="page-subtitle">Tap each card to flip & reveal 📸</div>
+
+        <div class="polaroid-deck">
+          <div class="polaroid-card" style="--rot: -6deg;" onclick="flipPolaroid(event, this)">
+            <div class="polaroid-inner">
+              <div class="polaroid-front">
+                <div class="polaroid-img-front">✨</div>
+                <div class="polaroid-text">My Soulmate</div>
+              </div>
+              <div class="polaroid-back">
+                <img alt="Her Photo" class="polaroid-img-back" id="I1" style="display:none;" />
+                <div class="polaroid-text">You're Gorgeous ❤️</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="polaroid-card" style="--rot: 2deg;" onclick="flipPolaroid(event, this)">
+            <div class="polaroid-inner">
+              <div class="polaroid-front">
+                <div class="polaroid-img-front">💖</div>
+                <div class="polaroid-text">Best Smiles</div>
+              </div>
+              <div class="polaroid-back">
+                <img alt="Her Photo" class="polaroid-img-back" id="I3" style="display:none;" />
+                <div class="polaroid-text">My Favorite 🥰</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="polaroid-card" style="--rot: 7deg;" onclick="flipPolaroid(event, this)">
+            <div class="polaroid-inner">
+              <div class="polaroid-front">
+                <div class="polaroid-img-front">💍</div>
+                <div class="polaroid-text">Forever Together</div>
+              </div>
+              <div class="polaroid-back">
+                <img alt="Her Photo" class="polaroid-img-back" id="C1" style="display:none;" />
+                <div class="polaroid-text">Future Wife 💍</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="message-content">
+          <p>
+            Looking back on all our memories, I'm constantly reminded how lucky I am. I can't wait for a lifetime of new places, big dreams, and holding your hand forever.
+          </p>
+        </div>
+      </div>
+
+      <div class="page" id="page-2">
+        <h1 class="page-title">Why I Love You</h1>
+        <div class="page-subtitle">Tap each card to reveal 💕</div>
+
+        <div class="love-grid">
+          <div class="love-card" onclick="revealCard(event, this)">
+            <div class="icon">🌸</div>
+            <span class="tap-hint">Tap to unlock</span>
+            <span class="secret">Your kind heart & gentle nature</span>
+          </div>
+          <div class="love-card" onclick="revealCard(event, this)">
+            <div class="icon">✨</div>
+            <span class="tap-hint">Tap to unlock</span>
+            <span class="secret">How you light up every single room</span>
+          </div>
+          <div class="love-card" onclick="revealCard(event, this)">
+            <div class="icon">💫</div>
+            <span class="tap-hint">Tap to unlock</span>
+            <span class="secret">Your laugh — my favorite sound</span>
+          </div>
+          <div class="love-card" onclick="revealCard(event, this)">
+            <div class="icon">💍</div>
+            <span class="tap-hint">Tap to unlock</span>
+            <span class="secret">Choosing you forever and always</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="page" id="page-3">
+        <h1 class="page-title">Forever & Always</h1>
+        <div class="page-subtitle">To the future Mrs. 💍❤️</div>
+
+        <div class="message-content" style="text-align: center;">
+          <p style="font-size: 1.05rem; font-style: italic; margin-bottom: 8px;">
+            "You are my today and all of my tomorrows."
+          </p>
+          <p>
+            May this new year bring you limitless joy, good health, and everything your heart desires. I love you more than words can say.
+          </p>
+        </div>
+
+        <div style="margin-top: 15px;">
+          <button class="nav-btn" onclick="openLoveModal(event)" style="padding: 12px 28px; font-size: 1rem;">
+            Ek Chota sa Surprise 💌 (Dil ki Baat 😊)
+          </button>
+        </div>
+      </div>
+
+      <div class="nav-footer">
+        <div class="page-dots">
+          <span class="dot active"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>
+        <div class="nav-buttons">
+          <button class="nav-btn secondary" id="prevBtn" onclick="changePage(-1)" style="visibility: hidden;">← Back</button>
+          <button class="nav-btn" id="nextBtn" onclick="changePage(1)">Next Page →</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <!-- Love Note Pop-up Modal -->
+  <div class="love-modal-overlay" id="loveModal" onclick="closeLoveModal(event)">
+    <div class="love-modal-card" onclick="event.stopPropagation()">
+      <!-- Close Button -->
+      <button class="modal-close-btn" onclick="closeLoveModal()">&times;</button>
+      
+      <!-- Modal Header -->
+      <h2 class="modal-title">A Special Note For You 💕</h2>
+      
+      <!-- Scrollable Content Area -->
+      <div class="modal-body-scroll">
+        <div class="modal-img-wrapper">
+          <img 
+            alt="Cute Moment" 
+            class="modal-hero-img"
+            id="SN"
+            style="display: none;"
+          />
+        </div>
+
+        <div class="modal-text">
+          <p>
+            My Dearest Radha Rani Jiii 🥰,
+          </p>
+          <p>
+            Happy 24! Patni Jii, you are the most beautiful person I have ever seen, beautiful eyes, beautiful heart, beautiful soul, and the most beautiful smile. Aap bolte ho Mata Ji ne hume milaya, me bolta hun Bhagwan Ram Ji ne hume milaya, but truth is donno ne mil kar mujhe bless kiya hai tab mujhe aap mile ho. Aap mano ya na mano but mene hi jyaada punya kiye the isliye aapko paya hai mene.
+          </p>
+          <p>
+            Aap mere liye kya ho, ye shabdo me bayan nahi kar sakta me, I know me aapko bohot saara pareshan karta hun Madam Jii, but aapko pata hai ki me aapko bohot pyaar karta hun, aap meri zindagi ho, meri jaan ho, meri duniya ho, meri sab kuch ho. Aap mere liye ek perfect partner ho darling jii, I know me aapko bohot pareshan karta hun humesha kuch na kuch zidd karta hun, baat nahi sunta hun, phir bhi you never complain aap humesha mere se pyaar karte ho, meri baat sunte ho, sorry but me sorry nahi bolunga is baat pe.... because you know right I am the lucky one 😍... Meri Patni Jiii bestest hai.. I love you bohot saara... 
+          </p>
+          <p>
+            Every moment with you is my favorite memory, and every tomorrow with you is a promise I look forward to keeping forever. Once Again Happy Birthday to the love of my life! 💍✨
+          </p>
+          <p class="modal-signature">
+            Forever Yours,<br>
+            Aapka Chotu Sa Husband❤️
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    // INIT //
+    function initApp() {
+      // Decrypt and display the static photo once
+      loadEncryptedImage('encrypted-images/I1.enc', document.getElementById('I1'));
+      loadEncryptedImage('encrypted-images/I3.enc', document.getElementById('I3'));
+      loadEncryptedImage('encrypted-images/C1.enc', document.getElementById('C1'));
+      loadEncryptedImage('encrypted-images/SN.enc', document.getElementById('SN'));
+      let password = sessionStorage.getItem('romantic_vault_key');
+        if (!password) {
+            // password = "Secret Password / Keyphrase:"
+            password = prompt('Enter our secret word to unlock this memory photo ❤️:');
+            if (!password) return;
+            sessionStorage.setItem('romantic_vault_key', password.trim());
+        }
+    }
+    // ----------------------------------------------------
+    // 1. Emoji Shower (One Uniform Emoji Per Click)
+    // ----------------------------------------------------
+    const loveEmojis = ['💖', '💋', '✨', '💍', '🥰', '🌸', '💕', '💐', '😍', '🌹', '❤️'];
+
+    function showerLoveEmojis(x, y, count = 22, forcedEmoji = null) {
+      const originX = (x !== undefined && !isNaN(x)) ? x : (window.innerWidth / 2);
+      const originY = (y !== undefined && !isNaN(y)) ? y : (window.innerHeight / 2);
+
+      // Pick ONE emoji for this entire shower burst
+      const chosenEmoji = forcedEmoji || loveEmojis[Math.floor(Math.random() * loveEmojis.length)];
+
+      for (let i = 0; i < count; i++) {
+        const el = document.createElement('div');
+        el.className = 'emoji-particle';
+        el.innerText = chosenEmoji;
+        
+        let posX = originX - 14;
+        let posY = originY - 14;
+        
+        const velocityX = (Math.random() - 0.5) * 12;
+        let velocityY = -(Math.random() * 10 + 5);
+        const gravity = 0.38;
+        let rotation = Math.random() * 360;
+        const rotationSpeed = (Math.random() - 0.5) * 10;
+        let opacity = 1;
+        let scale = Math.random() * 0.6 + 0.8;
+
+        document.body.appendChild(el);
+
+        function animate() {
+          velocityY += gravity;
+          posX += velocityX;
+          posY += velocityY;
+          rotation += rotationSpeed;
+          opacity -= 0.011;
+
+          el.style.transform = `translate3d(${posX}px, ${posY}px, 0) rotate(${rotation}deg) scale(${scale})`;
+          el.style.opacity = Math.max(opacity, 0);
+
+          if (opacity > 0 && posY < window.innerHeight + 50) {
+            requestAnimationFrame(animate);
+          } else {
+            el.remove();
+          }
+        }
+
+        requestAnimationFrame(animate);
+      }
+    }
+
+    // ----------------------------------------------------
+    // 2. Stage 1 Envelope Opening
+    // ----------------------------------------------------
+    function openEnvelope(event) {
+      document.getElementById('envelope').classList.add('open');
+      
+      const clickX = event ? event.clientX : window.innerWidth / 2;
+      const clickY = event ? event.clientY : window.innerHeight / 2;
+      showerLoveEmojis(clickX, clickY, 30);
+
+      setTimeout(() => {
+        document.getElementById('envelopeWrapper').style.display = 'none';
+        const book = document.getElementById('bookContainer');
+        book.style.display = 'flex';
+      },700);
+    }
+
+    // ----------------------------------------------------
+    // 3. Multi-Page Navigation
+    // ----------------------------------------------------
+    let currentPage = 0;
+    const totalPages = 4;
+
+    function changePage(direction) {
+      const prevPage = currentPage;
+      currentPage += direction;
+
+      if (currentPage < 0) currentPage = 0;
+      if (currentPage >= totalPages) currentPage = totalPages - 1;
+
+      document.getElementById(`page-${prevPage}`).classList.remove('active');
+      document.getElementById(`page-${currentPage}`).classList.add('active');
+
+      const dots = document.querySelectorAll('.dot');
+      dots.forEach((dot, idx) => {
+        dot.classList.toggle('active', idx === currentPage);
+      });
+
+      document.getElementById('prevBtn').style.visibility = currentPage === 0 ? 'hidden' : 'visible';
+      
+      const nextBtn = document.getElementById('nextBtn');
+      if (currentPage === totalPages - 1) {
+        nextBtn.style.visibility = 'hidden';
+      } else {
+        nextBtn.style.visibility = 'visible';
+        nextBtn.innerText = 'Next Page →';
+      }
+
+      showerLoveEmojis(window.innerWidth / 2, window.innerHeight / 2, 16);
+    }
+
+    // ----------------------------------------------------
+    // 4. Page 1: Surprise Gift Box
+    // ----------------------------------------------------
+    const sweetNotes = [
+      "💍 'You make every day brighter just by being in it.'",
+      "✨ 'You are the most gorgeous fiancée in the universe.'",
+      "💖 'My favorite place in the world is right next to you.'",
+      "🥂 'Here's to a lifetime of celebrating your special day!'"
+    ];
+    let noteIndex = 0;
+
+    function openGift(event) {
+      const gift = document.getElementById('giftBox');
+      const box = document.getElementById('reasonsBox');
+      const prompt = document.getElementById('giftPrompt');
+
+      gift.innerText = "💎";
+      gift.style.animation = "none";
+      prompt.innerText = "✨ Tap again for more love! ✨";
+
+      box.style.display = "block";
+      box.innerText = sweetNotes[noteIndex];
+      noteIndex = (noteIndex + 1) % sweetNotes.length;
+
+      const rect = gift.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      showerLoveEmojis(centerX, centerY, 22);
+    }
+
+    // ----------------------------------------------------
+    // 5. Page 2: Flip Polaroid Card
+    // ----------------------------------------------------
+    function flipPolaroid(event, card) {
+      event.stopPropagation();
+      card.classList.toggle('is-flipped');
+      
+      const rect = card.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      showerLoveEmojis(centerX, centerY, 20);
+    }
+
+    // ----------------------------------------------------
+    // 6. Page 3: Reveal Reasons
+    // ----------------------------------------------------
+    function revealCard(event, el) {
+      if (!el.classList.contains('revealed')) {
+        el.classList.add('revealed');
+        const rect = el.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        showerLoveEmojis(centerX, centerY, 18);
+      }
+    }
+
+    // ----------------------------------------------------
+    // 7. Page 4: Big Kiss Explosion Button
+    // ----------------------------------------------------
+    function fireHeartExplosion(event) {
+      const x = event ? event.clientX : window.innerWidth / 2;
+      const y = event ? event.clientY : window.innerHeight / 2;
+      // Dedicated kiss shower on the kiss button
+      showerLoveEmojis(x, y, 40, '💋');
+    }
+
+    // ----------------------------------------------------
+    // 8. Ambient Background Canvas
+    // ----------------------------------------------------
+    const canvas = document.getElementById('hearts-canvas');
+    const ctx = canvas.getContext('2d');
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    class FloatingHeart {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random() * width;
+        this.y = height + 20;
+        this.size = Math.random() * 14 + 10;
+        this.speed = Math.random() * 1.2 + 0.6;
+        this.opacity = Math.random() * 0.45 + 0.15;
+        this.swing = Math.random() * 0.02;
+        this.swingCount = Math.random() * Math.PI * 2;
+      }
+      draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.fillStyle = `rgba(255, 105, 135, ${this.opacity})`;
+        ctx.beginPath();
+        const top = this.size * 0.3;
+        ctx.moveTo(0, top);
+        ctx.bezierCurveTo(0, 0, -this.size / 2, 0, -this.size / 2, top);
+        ctx.bezierCurveTo(-this.size / 2, (this.size + top) / 2, 0, this.size, 0, this.size);
+        ctx.bezierCurveTo(0, this.size, this.size / 2, (this.size + top) / 2, this.size / 2, top);
+        ctx.bezierCurveTo(this.size / 2, 0, 0, 0, 0, top);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+      update() {
+        this.y -= this.speed;
+        this.swingCount += this.swing;
+        this.x += Math.sin(this.swingCount) * 0.8;
+        if (this.y < -30) this.reset();
+      }
+    }
+
+    const hearts = Array.from({ length: 28 }, () => new FloatingHeart());
+    function animateBackground() {
+      ctx.clearRect(0, 0, width, height);
+      hearts.forEach(h => { h.update(); h.draw(); });
+      requestAnimationFrame(animateBackground);
+    }
+    animateBackground();
+
+    // Open Modal + Trigger Dedicated Kiss Emoji Burst
+    function openLoveModal(event) {
+      // Shower kisses from the click spot
+      if (typeof showerLoveEmojis === 'function') {
+        const x = event ? event.clientX : window.innerWidth / 2;
+        const y = event ? event.clientY : window.innerHeight / 2;
+        showerLoveEmojis(x, y, 30, '💋');
+      }
+
+      // Open modal after a tiny pause for the burst effect
+      setTimeout(() => {
+        document.getElementById('loveModal').classList.add('active');
+      }, 180);
+    }
+
+    // Close Modal
+    function closeLoveModal(event) {
+      if (event && event.target !== event.currentTarget) return;
+      document.getElementById('loveModal').classList.remove('active');
+    }
+
+    // ==========================================
+        // CLIENT-SIDE AES-GCM DECRYPTOR
+        // ==========================================
+
+        async function deriveDecryptionKey(password, salt) {
+        const enc = new TextEncoder();
+        const baseKey = await crypto.subtle.importKey(
+            'raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']
+        );
+        return crypto.subtle.deriveKey(
+            { name: 'PBKDF2', salt: salt, iterations: 100000, hash: 'SHA-256' },
+            baseKey,
+            { name: 'AES-GCM', length: 256 },
+            false,
+            ['decrypt']
+        );
+        }
+
+        /**
+         * Fetches an encrypted .enc file, decrypts it using the provided passphrase,
+         * and sets the image src to a temporary local Object URL.
+         * 
+         * @param {string} encFilePath - Path to .enc file (e.g. 'encrypted-images/day30.enc')
+         * @param {HTMLImageElement} imgElement - The <img> tag to display the decrypted image
+         */
+        async function loadEncryptedImage(encFilePath, imgElement) {
+        // Check if password was already saved in this session, otherwise ask for it
+        let password = sessionStorage.getItem('romantic_vault_key');
+        if (!password) {
+            // password = "Secret Password / Keyphrase:"
+            password = prompt('Enter our secret word to unlock this memory photo ❤️:');
+            if (!password) return;
+            sessionStorage.setItem('romantic_vault_key', password.trim());
+        }
+
+        try {
+            const response = await fetch(encFilePath);
+            if (!response.ok) throw new Error(`Could not load ${encFilePath}`);
+            const arrayBuffer = await response.arrayBuffer();
+
+            // Extract Salt (first 16 bytes) and IV (next 12 bytes)
+            const salt = new Uint8Array(arrayBuffer.slice(0, 16));
+            const iv = new Uint8Array(arrayBuffer.slice(16, 28));
+            const ciphertext = arrayBuffer.slice(28);
+
+            // Derive the matching AES key
+            const key = await deriveDecryptionKey(password, salt);
+
+            // Decrypt the raw bytes
+            const decryptedBuffer = await crypto.subtle.decrypt(
+            { name: 'AES-GCM', iv: iv },
+            key,
+            ciphertext
+            );
+
+            // Convert raw bytes to a displayable image blob
+            const blob = new Blob([decryptedBuffer], { type: 'image/jpeg' });
+            imgElement.src = URL.createObjectURL(blob);
+            imgElement.style.display = 'block';
+
+        } catch (err) {
+            console.error('Decryption failed:', err);
+            sessionStorage.removeItem('romantic_vault_key'); // clear faulty password
+            alert('Incorrect secret word! Please try again ❤️');
+            password = prompt('Enter our secret word to unlock this memory photo ❤️:');
+        }
+        };
+        // At the bottom of your <script>
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', initApp);
+        } else {
+          // If the DOM is already ready, run it immediately
+          initApp();
+        };
+  </script>
+</body>
+</html>
