@@ -371,7 +371,7 @@
     }
 
     .love-card .secret {
-      font-size: 0.82rem;
+      font-size: 0.75rem;
       color: var(--primary-dark);
       font-weight: 600;
       display: none;
@@ -674,22 +674,22 @@
           <div class="love-card" onclick="revealCard(event, this)">
             <div class="icon">🌸</div>
             <span class="tap-hint">Tap to unlock</span>
-            <span class="secret">Your kind heart & gentle nature</span>
+            <span class="secret">Your kind heart & gentle nature - હે તારી મસ્મીઠી મધમીઠી વાતો મારુ મન મોહી ગયુ</span>
           </div>
           <div class="love-card" onclick="revealCard(event, this)">
             <div class="icon">✨</div>
             <span class="tap-hint">Tap to unlock</span>
-            <span class="secret">How you light up every single room</span>
+            <span class="secret">Baby, you light up my world like nobody else</span>
           </div>
           <div class="love-card" onclick="revealCard(event, this)">
             <div class="icon">💫</div>
             <span class="tap-hint">Tap to unlock</span>
-            <span class="secret">Your laugh — my favorite sound</span>
+            <span class="secret">Your laugh — my favorite sound — तू हसदा ए ते मेरा रब हसद</span>
           </div>
           <div class="love-card" onclick="revealCard(event, this)">
             <div class="icon">💍</div>
             <span class="tap-hint">Tap to unlock</span>
-            <span class="secret">Choosing you forever and always</span>
+            <span class="secret">Choosing you forever and always...Because — तू ही मेरा मेरा मेरा</span>
           </div>
         </div>
       </div>
@@ -853,7 +853,7 @@
         document.getElementById('envelopeWrapper').style.display = 'none';
         const book = document.getElementById('bookContainer');
         book.style.display = 'flex';
-      },700);
+      },180);
     }
 
     // ----------------------------------------------------
@@ -1096,7 +1096,7 @@
             console.error('Decryption failed:', err);
             localStorage.removeItem('romantic_vault_key'); // clear faulty password
             alert('Incorrect secret word! Please try again ❤️');
-            password = prompt('Enter our secret word to unlock this memory photo ❤️:');
+            // password = prompt('Enter our secret word to unlock this memory photo ❤️:');
         }
         };
         // At the bottom of your <script>
